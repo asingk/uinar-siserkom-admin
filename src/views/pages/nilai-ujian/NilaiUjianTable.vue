@@ -7,11 +7,11 @@ const url = `${import.meta.env.VITE_SISERKOM_API_URL}/nilai-ujian`
 
 const { data } = await useFetch(url).get().json()
 
-nilaiUjianList.value = data.value
+nilaiUjianList.value = data.value.nilaiUjian
 async function submit() {
   const { data: submitData } = await useFetch(url).get().json()
 
-  nilaiUjianList.value = submitData.value
+  nilaiUjianList.value = submitData.value.nilaiUjian
 }
 </script>
 

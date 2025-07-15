@@ -7,11 +7,11 @@ const url = `${import.meta.env.VITE_SISERKOM_API_URL}/jenis-invoice`
 
 const { data } = await useFetch(url).get().json()
 
-jenisList.value = data.value
+jenisList.value = data.value.jenisInvoice
 async function submit() {
   const { data: submitData } = await useFetch(url).get().json()
 
-  jenisList.value = submitData.value
+  jenisList.value = submitData.value.jenisInvoice
 }
 </script>
 

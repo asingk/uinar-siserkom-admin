@@ -9,11 +9,11 @@ const url = `${import.meta.env.VITE_SISERKOM_API_URL}/pengajar`
 
 const { data } = await useFetch(url).get().json()
 
-pengajarList.value = data.value
+pengajarList.value = data.value.pengajar
 async function submit() {
   const { data: submitData } = await useFetch(url).get().json()
 
-  pengajarList.value = submitData.value
+  pengajarList.value = submitData.value.pengajar
 }
 </script>
 

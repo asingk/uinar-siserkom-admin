@@ -12,7 +12,7 @@ const waktu = ref('')
 const pengajarId = ref(null)
 const jenisId = ref(null)
 const dayaTampung = ref(null)
-const adminId = inject('adminId')
+const keycloak = inject('keycloak')
 
 const jenisItem = [
   { value: 1, title: 'Pelatihan' },
@@ -23,21 +23,21 @@ watch(dialog, async newX => {
   if (newX) {
     const { data } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/pengajar`).get().json()
 
-    pengajarItem.value = data.value.filter(row => !row.isDisabled)
+    pengajarItem.value = data.value.pengajar.filter(row => !row.isDisabled)
   }
 })
 
 async function submit() {
   const { data } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/kelas`, {
     headers: {
-      apikey: import.meta.env.VITE_SISERKOM_API_KEY,
+      Authorization: `Bearer ${keycloak.token}`,
     },
   }).post({
     idPengajar: pengajarId.value,
     idJenisInvoice: jenisId.value,
     waktu: waktu.value,
     dayaTampung: dayaTampung.value,
-    createdBy: adminId,
+    createdBy: keycloak.tokenParsed?.preferred_username,
   })
 
   if (data) {

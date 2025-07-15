@@ -7,7 +7,7 @@ const props = defineProps({
 
 const { data } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/kelas/${props.id}`).get().json()
 const { data: nilaiUjianData } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/nilai-ujian`).get().json()
-const nilaiUjianItems = nilaiUjianData.value.map(row => `${row.id} = ${row.nilaiAngka} ${row.isLulus ? 'Lulus' : 'Tidak Lulus'}`)
+const nilaiUjianItems = nilaiUjianData.value.nilaiUjian.map(row => `${row.id} = ${row.nilaiAngka} ${row.isLulus ? 'Lulus' : 'Tidak Lulus'}`)
 </script>
 
 <template>

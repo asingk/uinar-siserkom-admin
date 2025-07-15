@@ -34,10 +34,32 @@ keycloak
     // Register plugins
     registerPlugins(app)
     app.config.globalProperties.keycloak = keycloak
-    app.provide('adminId', keycloak.tokenParsed?.preferred_username)
+    app.provide('keycloak', keycloak)
 
     // Mount vue app
     app.mount('#app')
+
+    setInterval(() => {
+      keycloak
+        .updateToken(70)
+        .then(refreshed => {
+          if (refreshed) {
+            console.debug(`Token refreshed ${refreshed}`)
+          }
+          else {
+            console.debug(
+              `Token not refreshed, valid for ${
+                Math.round(
+                  keycloak.tokenParsed.exp + keycloak.timeSkew - new Date().getTime() / 1000,
+                )
+              } seconds`,
+            )
+          }
+        })
+        .catch(() => {
+          console.error('Failed to refresh token')
+        })
+    }, 60000)
   })
   .catch(() => {
     console.log('Authenticated Failed')

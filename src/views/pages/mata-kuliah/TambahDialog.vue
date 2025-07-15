@@ -3,17 +3,17 @@ const emit = defineEmits(['submit'])
 const dialog = ref(false)
 const kode = ref('')
 const nama = ref('')
-const adminId = inject('adminId')
+const keycloak = inject('keycloak')
 
 async function submit() {
   const { data } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/mata-kuliah`, {
     headers: {
-      apikey: import.meta.env.VITE_SISERKOM_API_KEY,
+      Authorization: `Bearer ${keycloak.token}`,
     },
   }).post({
     id: kode.value,
     nama: nama.value,
-    createdBy: adminId,
+    createdBy: keycloak.tokenParsed?.preferred_username,
   })
 
   if (data) {

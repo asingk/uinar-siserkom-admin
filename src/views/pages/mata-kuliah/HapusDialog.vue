@@ -5,13 +5,14 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['submit'])
+const keycloak = inject('keycloak')
 
 const dialog = ref(false)
 
 async function submit() {
   const { data: submitData } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/mata-kuliah/${props.id}`, {
     headers: {
-      apikey: import.meta.env.VITE_SISERKOM_API_KEY,
+      Authorization: `Bearer ${keycloak.token}`,
     },
   }).delete()
 

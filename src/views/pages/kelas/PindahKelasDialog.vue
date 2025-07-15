@@ -10,31 +10,31 @@ const emit = defineEmits(['submit'])
 const dialog = ref(false)
 const kelasItem = ref([])
 const kelasBaruId = ref()
-const adminId = inject('adminId')
+const keycloak = inject('keycloak')
 
 watch(dialog, async newX => {
   if (newX) {
     const { data } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/kelas/available?jenisInvoice=${props.jenis}`).get().json()
 
-    kelasItem.value = data.value.map(row => ({ value: row.id, title: `${row.namaPengajar} | ${row.tanggal} | ${row.jam.substring(0, 5)}` }))
+    kelasItem.value = data.value.kelasAvailable.map(row => ({ value: row.id, title: `${row.namaPengajar} | ${row.tanggal} | ${row.jam.substring(0, 5)}` }))
   }
 })
 
 async function submit() {
   await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/kelas/${props.idKelas}/invoice/${props.id}`, {
     headers: {
-      apikey: import.meta.env.VITE_SISERKOM_API_KEY,
+      Authorization: `Bearer ${keycloak.token}`,
     },
   }).delete({
-    updatedBy: adminId,
+    updatedBy: keycloak.tokenParsed?.preferred_username,
   })
 
   const { data: submitData } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/invoice/${props.id}/kelas/${kelasBaruId.value}`, {
     headers: {
-      apikey: import.meta.env.VITE_SISERKOM_API_KEY,
+      Authorization: `Bearer ${keycloak.token}`,
     },
   }).post({
-    updatedBy: adminId,
+    updatedBy: keycloak.tokenParsed?.preferred_username,
   })
 
   if (submitData) {

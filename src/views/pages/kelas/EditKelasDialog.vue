@@ -16,7 +16,7 @@ const waktu = ref()
 const pengajarId = ref()
 const jenisId = ref()
 const dayaTampung = ref()
-const adminId = inject('adminId')
+const keycloak = inject('keycloak')
 
 const jenisItem = [
   { value: 1, title: 'Pelatihan' },
@@ -27,7 +27,7 @@ watch(dialog, async newX => {
   if (newX) {
     const { data: pengajarData } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/pengajar`).get().json()
 
-    pengajarItem.value = pengajarData.value.filter(row => !row.isDisabled)
+    pengajarItem.value = pengajarData.value.pengajar.filter(row => !row.isDisabled)
 
     const { data } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/kelas/${props.id}`).get().json()
 
@@ -51,14 +51,14 @@ watch(dialog, async newX => {
 async function submit() {
   const { data: submitData } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/kelas/${props.id}`, {
     headers: {
-      apikey: import.meta.env.VITE_SISERKOM_API_KEY,
+      Authorization: `Bearer ${keycloak.token}`,
     },
   }).put({
     idPengajar: pengajarId.value,
     idJenisInvoice: jenisId.value,
     waktu: waktu.value,
     dayaTampung: dayaTampung.value,
-    updatedBy: adminId,
+    updatedBy: keycloak.tokenParsed?.preferred_username,
   })
 
   if (submitData) {
@@ -93,7 +93,7 @@ watchEffect(() => {
 
       <VCard
         prepend-icon="bx-plus-circle"
-        title="Tambah Kelas"
+        title="Ubah Kelas"
       >
         <VCardText>
           <VRow dense>

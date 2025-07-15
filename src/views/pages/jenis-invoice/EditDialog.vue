@@ -7,7 +7,7 @@ const emit = defineEmits(['submit'])
 const dialog = ref(false)
 const nama = ref()
 const biaya = ref()
-const adminId = inject('adminId')
+const keycloak = inject('keycloak')
 
 watch(dialog, async newX => {
   if (newX) {
@@ -21,12 +21,12 @@ watch(dialog, async newX => {
 async function submit() {
   const { data: submitData } = await useFetch(`${import.meta.env.VITE_SISERKOM_API_URL}/jenis-invoice/${props.id}`, {
     headers: {
-      apikey: import.meta.env.VITE_SISERKOM_API_KEY,
+      Authorization: `Bearer ${keycloak.token}`,
     },
   }).put({
     biaya: biaya.value,
     nama: nama.value,
-    updatedBy: adminId,
+    updatedBy: keycloak.tokenParsed?.preferred_username,
   })
 
   if (submitData) {
